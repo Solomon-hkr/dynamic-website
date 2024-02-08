@@ -1,49 +1,46 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Fetch and display posts
-    fetch('https://dummyjson.com/posts')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to fetch posts');
-            }
-            return response.json();
-        })
-        .then(data => {
-            const posts = data.posts; // Access the 'posts' array from the response
-            displayPosts(posts);
-            // Fetch comments for each post and display them
-            fetchCommentsForPosts(posts);
-        })
-        .catch(error => console.error('Error fetching posts:', error));
-
     // Fetch user data
-    fetch('https://dummyjson.com/users')
+    fetch('https://dummyjson.com/users?limit=80')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Failed to fetch users');
             }
             return response.json();
         })
-        .then(users => {
-            // Organize user data into an object or class
+        .then(data => {
+            const users = data.users || []; // Check if users data is present, otherwise default to empty array
             const userMap = organizeUserData(users);
 
-            // Add click event to posts for displaying user profiles
-            document.getElementById('posts').addEventListener('click', (event) => {
-                const userId = event.target.dataset.userId;
-                if (userId) {
-                    displayUserProfile(userMap[userId]);
-                }
-            });
+            // Fetch and display posts
+            fetch('https://dummyjson.com/posts?limit=80')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch posts');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const posts = data.posts || []; // Check if posts data is present, otherwise default to empty array
+                    displayPosts(posts, userMap);
+                    fetchCommentsForPosts(posts);
+                })
+                .catch(error => console.error('Error fetching posts:', error));
         })
         .catch(error => console.error('Error fetching users:', error));
 });
 
 
-function displayPosts(posts) {
-    const postsContainer = document.getElementById('posts');
+function displayPosts(posts, userMap) {
+    const postsContainer = document.getElementById('big-all-posts-container');
     posts.forEach(post => {
         const postElement = document.createElement('div');
-        postElement.classList.add('post');
+        postElement.classList.add('post-container');
+        const authorName = userMap[post.userId] ? `${userMap[post.userId].firstName} ${userMap[post.userId].lastName}` : 'Unknown';
+
+        //my new add for the image
+        const authorImage = userMap[post.userId] ? `${userMap[post.userId].image}` : 'No image';
+        //-------------
+
         postElement.innerHTML = `
             <h2>${post.title}</h2>
             <p>${post.body}</p>
@@ -51,28 +48,39 @@ function displayPosts(posts) {
             <p>userId:${post.userId}</p>
             <p>reactions:${post.reactions}</p>
             <p>tags:${post.tags}</p>
-            <p>Author: <span class="author" data-user-id="${post.userId}">User Name</span></p>
-            <div class="comments" id="comments-${post.id}"></div>
+            
+
+            <div class="image-and-name-container">
+            <img src="${authorImage}" alt ="image of the author">
+            <p>Author: <span class="author" data-user-id="${post.userId}">${authorName}</span></p>            
+            </div>
+            
+            <div class="big-comments-container" id="comments-${post.id}"></div>
         `;
         postsContainer.appendChild(postElement);
+
+        // Add event listener for user name click
+        const authorElement = postElement.querySelector('.author');
+        authorElement.addEventListener('click', () => {
+            const userId = authorElement.getAttribute('data-user-id');
+            const user = userMap[userId];
+            displayUserProfile(user);
+        });
     });
 }
 
+
 function fetchCommentsForPosts(posts) {
     posts.forEach(post => {
-        fetch(`https://dummyjson.com/comments?postId=${post.id}`)
-        //appending the postId of the current post to the URL as a query parameter. 
-        //This is done using string interpolation ${post.id} to insert the id of 
-        //the current post into the URL.
+        
+        fetch(`https://dummyjson.com/comments?postId=${post.id}&limit=100`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Failed to fetch comments');
                 }
-                return response.json(); //converts the response from a stream to a JSON object.
+                return response.json();
             })
             .then(comments => displayComments(post.id, comments))
-             // Passing the id of the current post (post.id) and the comments data as parameters
-             //in the displayComment function
             .catch(error => console.error('Error fetching comments:', error));
     });
 }
@@ -80,7 +88,6 @@ function fetchCommentsForPosts(posts) {
 function displayComments(postId, commentsData) {
     const commentsContainer = document.getElementById(`comments-${postId}`);
     
-    // Check if 'comments' property exists in the data
     if (!commentsData.hasOwnProperty('comments')) {
         console.error('Invalid comments data:', commentsData);
         return;
@@ -88,13 +95,11 @@ function displayComments(postId, commentsData) {
     
     const comments = commentsData.comments;
 
-    // Filter comments based on postId
     const postComments = comments.filter(comment => comment.postId === postId);
 
-    // Append filtered comments to the commentsContainer
     postComments.forEach(comment => {
         const commentElement = document.createElement('div');
-        commentElement.classList.add('comment');
+        commentElement.classList.add('small-comments-container');
         commentElement.innerHTML = `
             <p>${comment.body}</p>
             <p>By: ${comment.user.username}</p>
@@ -106,10 +111,34 @@ function displayComments(postId, commentsData) {
 }
 
 
+function displayUserProfile(user) {
+    const userProfileModal = document.getElementById('userProfileModal');
+    const userProfileDetails = document.getElementById('userProfileDetails');
 
+    userProfileDetails.innerHTML = `
+        <h2>User Profile</h2>
+        <p><strong>Name:</strong> ${user.firstName} ${user.lastName}</p>
+        <p><strong>Age:</strong> ${user.age}</p>
+        <p><strong>Gender:</strong> ${user.gender}</p>
+        <p><strong>Email:</strong> ${user.email}</p>        
+    `;
+
+    userProfileModal.style.display = 'block';
+
+    // Close modal when close button or outside modal is clicked
+    const closeBtn = document.getElementsByClassName('close')[0];
+    closeBtn.onclick = function() {
+        userProfileModal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == userProfileModal) {
+            userProfileModal.style.display = 'none';
+        }
+    }
+}
 
 function organizeUserData(users) {
-    // Ensure users is an array
     if (!Array.isArray(users)) {
         console.error('Invalid users data:', users);
         return {};
@@ -121,30 +150,3 @@ function organizeUserData(users) {
     });
     return userMap;
 }
-
-function displayUserProfile(user) {
-    // Display user profile information in a modal
-    const modal = document.getElementById('userProfileModal');
-    const userProfileDetails = document.getElementById('userProfileDetails');
-    userProfileDetails.innerHTML = `
-        <h2>User Profile</h2>
-        <p>Name: ${user.name}</p>
-        <p>Email: ${user.email}</p>
-        <p>Website: ${user.website}</p>
-    `;
-    modal.style.display = 'block';
-
-    // Close modal when user clicks on close button
-    const closeBtn = document.querySelector('.close');
-    closeBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
-
-    // Close modal when user clicks anywhere outside of the modal content
-    window.addEventListener('click', (event) => {
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    });
-}
-
