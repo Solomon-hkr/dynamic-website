@@ -9,7 +9,7 @@ body {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to right, #56564e, #44423e);
+    background: linear-gradient(to right, #618a9b, #2d5c57);
     padding: 15px;
     position: sticky;
     top: 0;
@@ -51,7 +51,7 @@ button:disabled {
     cursor: not-allowed;
 }
 
-/* Contact form styling */
+
 #contactForm {
     display: inline-block;
 }
@@ -59,39 +59,65 @@ button:disabled {
 
 
 /* Post and comment container */
-#big-all-posts-container{
-    background-color: #61a4f6;
+
+#big-all-posts-container {
     display: flex;
     flex-wrap: wrap;
+    justify-content:space-around;
+}
 
+
+
+.post-container{
+    display: flex;
+    flex-direction: column;
+    border: 0.5px solid rgb(157, 153, 153);
+    padding: 2px;
+    width: 250px;
+
+    height: 100%;
+    padding-bottom: 0px;
+    padding-top: 10px;
+
+    cursor: pointer;
+
+    width: 250px;
+    height: auto; /* Allow containers to expand vertically */
+    margin-bottom: 10px;
 
 }
 
-.post-container {
-    border: 1px solid #ccc;
-    padding: 10px;
-    width: 300px;
-    margin: 20px;
-    background-color: rgb(144, 192, 176);
-}
 
 /*----- for the image and name container and with in it ----*/
 
 .image-and-name-container {
     display: flex;
     align-items: center;
+
 }
 
 .image-and-name-container img {
     width: 40px; 
     height: 40px; 
-    border-radius: 50%; /* the image is round */
+    border-radius: 50%; 
     margin-right: 10px; /* space between the image and the name */
 }
+.image-and-name-container .user-id{
+    margin-left: auto;  /* Place it to the right */
+    margin-right: 10px;
+}
+.post-container .post-body{
+    text-align: justify;
+    padding: 5px;
+    align-self: flex-start; /* Align text to the top of the container */
 
-.image-and-name-container .p {
-    font-size: 20px; 
-    margin: 0; 
+}
+
+.post-container .reaction-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
 }
 
 .big-comments-container {
@@ -107,9 +133,16 @@ button:disabled {
     padding-top: 10px;
     border-top: 1px solid #ccc;
     background-color: rgb(69, 118, 87);
+
 }
 
-/* Add hover effect to the author's name */
+.small-comments-container .comment-name-and-id{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+}
+
 .author {
     cursor: pointer;
 }
@@ -118,7 +151,6 @@ button:disabled {
     text-decoration: underline;
 }
 
-/* Modal styling */
 .modal {
     display: none;
     position: fixed;
@@ -155,17 +187,4 @@ button:disabled {
     text-decoration: none;
     cursor: pointer;
 }
-
-/* Add hover effect to the author's name */
-.author {
-    cursor: pointer;
-}
-
-.author:hover {
-    text-decoration: underline;
-}
-
-
-
-
 

@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('https://dummyjson.com/users?limit=80')
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to fetch users');
+                throw new Error('Users data can not be fetched');
             }
             return response.json();
         })
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fetch('https://dummyjson.com/posts?limit=80')
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Failed to fetch posts');
+                        throw new Error('Posts data can not be fetched');
                     }
                     return response.json();
                 })
@@ -35,28 +35,33 @@ function displayPosts(posts, userMap) {
     posts.forEach(post => {
         const postElement = document.createElement('div');
         postElement.classList.add('post-container');
-        const authorName = userMap[post.userId] ? `${userMap[post.userId].firstName} ${userMap[post.userId].lastName}` : 'Unknown';
+        const authorName = userMap[post.userId] ? `${userMap[post.userId].firstName} ${userMap[post.userId].lastName}` : 'Author Unknown';
 
         //my new add for the image
         const authorImage = userMap[post.userId] ? `${userMap[post.userId].image}` : 'No image';
         //-------------
 
         postElement.innerHTML = `
-            <h2>${post.title}</h2>
-            <p>${post.body}</p>
-            <p>id:${post.id}</p>
-            <p>userId:${post.userId}</p>
-            <p>reactions:${post.reactions}</p>
-            <p>tags:${post.tags}</p>
-            
-
             <div class="image-and-name-container">
             <img src="${authorImage}" alt ="image of the author">
-            <p>Author: <span class="author" data-user-id="${post.userId}">${authorName}</span></p>            
+            <p>  <span class="author"  data-user-id="${post.userId}">${authorName}</span> </p>
+            <p class="user-id">userId:${post.userId}</p>           
             </div>
+           
+            <h4>${post.title}</h4>
+            <p class="post-body">${post.body}</p>
+
+            <div class="reaction-container">
+            <p class="post-comment"> Comments </p>
+            <p>reactions:${post.reactions}</p>
+            <p class="post-id">postId:${post.id}</p>            
+            
+            </div>
+ 
             
             <div class="big-comments-container" id="comments-${post.id}"></div>
         `;
+
         postsContainer.appendChild(postElement);
 
         // Add event listener for user name click
@@ -102,9 +107,12 @@ function displayComments(postId, commentsData) {
         commentElement.classList.add('small-comments-container');
         commentElement.innerHTML = `
             <p>${comment.body}</p>
+
+            <div class="comment-name-and-id">
             <p>By: ${comment.user.username}</p>
             <p>id: ${comment.id}</p>
             <p>postId: ${comment.postId}</p>
+            </div>
         `;
         commentsContainer.appendChild(commentElement);
     });
