@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+/* document.addEventListener('DOMContentLoaded', () => {
     // This event listener waits for the DOM content to be fully loaded before 
     //executing its callback function
 
@@ -31,7 +31,76 @@ document.addEventListener('DOMContentLoaded', () => {
                 .catch(error => console.error('Error fetching posts:', error));
         })
         .catch(error => console.error('Error fetching users:', error));
+}); */
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // This event listener waits for the DOM content to be fully loaded before executing its callback function
+
+    // Fetch user data from a remote API endpoint
+    fetch('https://dummyjson.com/users?limit=80')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Users data can not be fetched');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const users = data.users; // Extract users array from the response data 
+            const userMap = organizeUserData(users);
+
+            // Fetch and display posts
+            fetch('https://dummyjson.com/posts?limit=80')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Posts data can not be fetched');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const posts = data.posts; // Extract posts array from the response data
+
+                    displayPosts(posts, userMap);
+                    fetchCommentsForPosts(posts);
+                })
+                .catch(error => console.error('Error fetching posts:', error));
+        })
+        .catch(error => console.error('Error fetching users:', error));
+
+    // Newly added codes for form validation
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const confirmCheckbox = document.getElementById('confirm');
+    const submitButton = document.querySelector('button[type="submit"]');
+
+    function validateName(name) {
+        return /^(?!\s)[a-zA-Z\s]{2,}$/.test(name);
+    }
+
+    function validateEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function isCheckboxChecked() {
+        return confirmCheckbox.checked;
+    }
+
+    //updates the disabled state of the submit button based on the validity of 
+    //the name, email, and checkbox inputs.
+    function updateSubmitButton() {
+        if (validateName(nameInput.value) && validateEmail(emailInput.value) && isCheckboxChecked()) {
+            submitButton.disabled = false;
+        } else {
+            submitButton.disabled = true;
+        }
+    }
+
+    nameInput.addEventListener('input', updateSubmitButton);
+    emailInput.addEventListener('input', updateSubmitButton);
+    confirmCheckbox.addEventListener('change', updateSubmitButton);
 });
+//--------------------------------------------------//
+
 
 
 function displayPosts(posts, userMap) {
