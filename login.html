@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
-    <title>Your Web Application</title>
+    <title>Login page</title>
 </head>
 <body>
     <!-- Navigation Bar -->
     <nav class="menu">
         <a id="logo"> P H</a>
-        <a href="#">Home</a>
+        <a href="index.html">Home</a>
         <a href="posts.html">Post</a>
-        <a href="login.html">Login</a>
         <a href="about.html">About</a>
     </nav>
 
@@ -25,18 +24,22 @@
         <p>Description of the application, purpose, and user instructions.</p>
     </section>
 
-        <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <p>&copy; 2024 Post House. All rights reserved.</p>
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-linkedin"></i></a>
-            </div>
-        </div>
-    </footer>
+    <!-- Contact Form -->
+    <section id="contact">
+        <h2>Contact Us</h2>
+        <form id="contactForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+
+            <input type="checkbox" id="confirm" required>
+            <label for="confirm">I confirm to send</label>
+
+            <button type="submit" disabled>Send</button>
+        </form>
+    </section>
 
     <script src="script.js"></script>
 </body>
