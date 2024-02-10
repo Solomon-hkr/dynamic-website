@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Fetch user data
+    // This event listener waits for the DOM content to be fully loaded before 
+    //executing its callback function
+
+    //Fetch user data from a remote API endpoint
     fetch('https://dummyjson.com/users?limit=80')
         .then(response => {
             if (!response.ok) {
@@ -8,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.json();
         })
         .then(data => {
-            const users = data.users || []; // Check if users data is present, otherwise default to empty array
+            const users = data.users; // Extract users array from the response data 
             const userMap = organizeUserData(users);
 
             // Fetch and display posts
@@ -20,7 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     return response.json();
                 })
                 .then(data => {
-                    const posts = data.posts || []; // Check if posts data is present, otherwise default to empty array
+                    const posts = data.posts; //Extract posts array from the response data
+
                     displayPosts(posts, userMap);
                     fetchCommentsForPosts(posts);
                 })
@@ -32,14 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function displayPosts(posts, userMap) {
     const postsContainer = document.getElementById('big-all-posts-container');
-    posts.forEach(post => {
+    posts.forEach(post => {   // Iterate through each post in the posts array
         const postElement = document.createElement('div');
         postElement.classList.add('post-container');
         const authorName = userMap[post.userId] ? `${userMap[post.userId].firstName} ${userMap[post.userId].lastName}` : 'Author Unknown';
 
-        //my new add for the image
         const authorImage = userMap[post.userId] ? `${userMap[post.userId].image}` : 'No image';
-        //-------------
 
         postElement.innerHTML = `
             <div class="image-and-name-container">
@@ -62,13 +64,13 @@ function displayPosts(posts, userMap) {
             <div class="big-comments-container" id="comments-${post.id}"></div>
         `;
 
-        postsContainer.appendChild(postElement);
+        postsContainer.appendChild(postElement); //Append the post container element to the posts container
 
         // Add event listener for user name click
         const authorElement = postElement.querySelector('.author');
         authorElement.addEventListener('click', () => {
             const userId = authorElement.getAttribute('data-user-id');
-            const user = userMap[userId];
+            const user = userMap[userId]; //Get the user data from the user map based on the user ID
             displayUserProfile(user);
         });
     });
@@ -120,10 +122,10 @@ function displayComments(postId, commentsData) {
 
 
 function displayUserProfile(user) {
-    const userProfileModal = document.getElementById('userProfileModal');
-    const userProfileDetails = document.getElementById('userProfileDetails');
+    const userProfilePopupBox = document.getElementById('userProfilePopupBox');
+    const userProfilePopupBoxDetails = document.getElementById('userProfilePopupBoxDetails');
 
-    userProfileDetails.innerHTML = `
+    userProfilePopupBoxDetails.innerHTML = `
         <h2>User Profile</h2>
         <p><strong>Name:</strong> ${user.firstName} ${user.lastName}</p>
         <p><strong>Age:</strong> ${user.age}</p>
@@ -131,30 +133,32 @@ function displayUserProfile(user) {
         <p><strong>Email:</strong> ${user.email}</p>        
     `;
 
-    userProfileModal.style.display = 'block';
+    userProfilePopupBox.style.display = 'block';
 
     // Close modal when close button or outside modal is clicked
     const closeBtn = document.getElementsByClassName('close')[0];
     closeBtn.onclick = function() {
-        userProfileModal.style.display = 'none';
+        userProfilePopupBox.style.display = 'none';
     }
 
     window.onclick = function(event) {
-        if (event.target == userProfileModal) {
-            userProfileModal.style.display = 'none';
+        if (event.target == userProfilePopupBox) {
+            userProfilePopupBox.style.display = 'none';
         }
     }
 }
 
 function organizeUserData(users) {
-    if (!Array.isArray(users)) {
+    if (!Array.isArray(users)) {  // Check if the users data is an array
         console.error('Invalid users data:', users);
         return {};
     }
 
-    const userMap = {};
-    users.forEach(user => {
-        userMap[user.id] = user;
+    const userMap = {}; // Initialize an empty object to store user data
+
+    users.forEach(user => {    // Iterate through each user in the users array        
+        userMap[user.id] = user; //Add user data to the user map with user ID as the key
     });
     return userMap;
 }
+
