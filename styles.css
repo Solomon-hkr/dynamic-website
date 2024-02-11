@@ -44,7 +44,6 @@ body {
 
 
 /* home section */
-/* Styles for the welcome section */
 #home .welcome {
     text-align: center;
     margin-top: 100px;
@@ -71,29 +70,6 @@ body {
     line-height: 1.6;
     margin-bottom: 50px;
 }
-/*--------------*/
-
-
-
-section {
-    margin: 30px;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-button:disabled {
-    background-color: lightgray;
-    cursor: not-allowed;
-}
-
-
-#contactForm {
-    display: inline-block;
-}
-/*-------------------------------------*/
 
 
 /* Post and comment container */
@@ -171,7 +147,7 @@ button:disabled {
     margin-top: 5px;
     padding-top: 5px;
     border-top: 1px solid #ccc;
-    background-color: rgb(148, 155, 151);
+    background-color: rgb(173, 175, 170);
     border-radius: 10px;
 }
 
@@ -179,7 +155,7 @@ button:disabled {
     margin-bottom: 5px;
     margin-top: 0px;
     padding-top: 0px;
-    border-top: 1px solid #ccc;    
+    border-top: 1px solid #61665e;    
     border-radius: 10px;
 
 }
@@ -209,6 +185,8 @@ button:disabled {
     text-decoration: underline;
 }
 
+/*--------for the modal/popup box--------------*/
+
 .PopupBox {
     display: none;
     position: fixed;
@@ -226,9 +204,11 @@ button:disabled {
     background-color: #cacaca;
     margin: 5% auto;
     padding: 20px;
+    border-radius: 10px; 
     border: 1px solid #888;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
     width: 40%;
-    border-radius: 10px;
+    
 }
 
 .close {
@@ -261,6 +241,21 @@ button:disabled {
 
 
 /*---------- Contact form ------------ */
+
+section {
+    margin: 30px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+button:disabled {
+    background-color: rgb(122, 132, 136);
+    cursor: not-allowed;
+}
+
 #contact {
   /*  background-color: #f4f4f4; */
     padding: 10px 10px;
@@ -287,12 +282,11 @@ button:disabled {
 #contactForm input[type="checkbox"] {
     margin-bottom: 20px;
     padding: 10px;
-    width: 300px;
+    width: 320px;
 }
 
 #contactForm button {
     padding: 10px 20px;
-    background-color: #545353;
     color: #c5c6cb;
     border: none;
     cursor: pointer;
@@ -303,9 +297,6 @@ button:disabled {
     background-color: #7c7b8d;
     cursor: not-allowed;
 }
-
-
-
 
 
 /*------------ Footer ---------------*/
