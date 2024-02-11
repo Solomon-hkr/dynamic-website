@@ -1,154 +1,133 @@
-/* document.addEventListener('DOMContentLoaded', () => {
-    // This event listener waits for the DOM content to be fully loaded before 
-    //executing its callback function
+let currentPage = 1; 
+const postsPerPage = 4; 
+let loading = false;
 
-    //Fetch user data from a remote API endpoint
+
+document.addEventListener('DOMContentLoaded', () => {    
     fetch('https://dummyjson.com/users?limit=80')
         .then(response => {
             if (!response.ok) {
-                throw new Error('Users data can not be fetched');
+                throw new Error('Users data cannot be fetched');
             }
             return response.json();
         })
         .then(data => {
-            const users = data.users; // Extract users array from the response data 
-            const userMap = organizeUserData(users);
+            const users = data.users;
+            userMap = organizeUserData(users);
 
-            // Fetch and display posts
-            fetch('https://dummyjson.com/posts?limit=80')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Posts data can not be fetched');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const posts = data.posts; //Extract posts array from the response data
-
-                    displayPosts(posts, userMap);
-                    fetchCommentsForPosts(posts);
-                })
-                .catch(error => console.error('Error fetching posts:', error));
-        })
-        .catch(error => console.error('Error fetching users:', error));
-}); */
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    // This event listener waits for the DOM content to be fully loaded before executing its callback function
-
-    // Fetch user data from a remote API endpoint
-    fetch('https://dummyjson.com/users?limit=80')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Users data can not be fetched');
-            }
-            return response.json();
-        })
-        .then(data => {
-            const users = data.users; // Extract users array from the response data 
-            const userMap = organizeUserData(users);
-
-            // Fetch and display posts
-            fetch('https://dummyjson.com/posts?limit=80')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Posts data can not be fetched');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const posts = data.posts; // Extract posts array from the response data
-
-                    displayPosts(posts, userMap);
-                    fetchCommentsForPosts(posts);
-                })
-                .catch(error => console.error('Error fetching posts:', error));
+            fetchPosts(currentPage, postsPerPage, userMap); //first page
         })
         .catch(error => console.error('Error fetching users:', error));
 
-    // Newly added codes for form validation
-    const nameInput = document.getElementById('name');
-    const emailInput = document.getElementById('email');
-    const confirmCheckbox = document.getElementById('confirm');
-    const submitButton = document.querySelector('button[type="submit"]');
+    window.addEventListener('scroll', () => ManageScrolling(userMap)); //to enable infinite scrolling
 
-    function validateName(name) {
-        return /^(?!\s)[a-zA-Z\s]{2,}$/.test(name);
-    }
-
-    function validateEmail(email) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    function isCheckboxChecked() {
-        return confirmCheckbox.checked;
-    }
-
-    //updates the disabled state of the submit button based on the validity of 
-    //the name, email, and checkbox inputs.
-    function updateSubmitButton() {
-        if (validateName(nameInput.value) && validateEmail(emailInput.value) && isCheckboxChecked()) {
-            submitButton.disabled = false;
-        } else {
-            submitButton.disabled = true;
+        // for form validation
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const confirmCheckbox = document.getElementById('confirm');
+        const submitButton = document.querySelector('button[type="submit"]');
+    
+        function validateName(name) {
+            return /^(?!\s)[a-zA-Z\s]{2,}$/.test(name);
         }
+    
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+    
+        function isCheckboxChecked() {
+            return confirmCheckbox.checked;
+        }    
+        
+        //Check validity of inputs and update the status
+        function updateSubmitButton() {
+            if (validateName(nameInput.value) && validateEmail(emailInput.value) && isCheckboxChecked()) {
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+            }
+        }
+    
+        //listens the event and calls the update function
+        nameInput.addEventListener('input', updateSubmitButton); 
+        emailInput.addEventListener('input', updateSubmitButton);
+        confirmCheckbox.addEventListener('change', updateSubmitButton); 
+    });
+
+
+function fetchPosts(page, perPage, userMap) {
+
+    loading = true; //prevent simultaneous requests
+    
+    fetch(`https://dummyjson.com/posts?limit=${perPage}&skip=${(page - 1) * perPage}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Posts data cannot be fetched');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Posts data:', data); // Log the data received from the API
+            const posts = data.posts;
+            displayPosts(posts, userMap);
+            fetchCommentsForPosts(posts);
+            currentPage++;
+            loading = false; // Set loading back to false after data is loaded
+        })
+        .catch(error => {
+            console.error('Error fetching posts:', error);
+            loading = false; // Set loading back to false in case of error
+        });
+}
+
+function ManageScrolling(userMap) {
+
+    if (loading) return; //if data is already being loaded, return
+
+    let scrollPosition = window.innerHeight + window.scrollY;
+    let documentHeight = document.body.offsetHeight;
+
+    // Load more data if user has scrolled to the bottom
+    if (scrollPosition >= documentHeight - 200) {
+        fetchPosts(currentPage, postsPerPage, userMap);
     }
-
-    nameInput.addEventListener('input', updateSubmitButton);
-    emailInput.addEventListener('input', updateSubmitButton);
-    confirmCheckbox.addEventListener('change', updateSubmitButton);
-});
-//--------------------------------------------------//
-
-
+}
 
 function displayPosts(posts, userMap) {
     const postsContainer = document.getElementById('big-all-posts-container');
-    posts.forEach(post => {   // Iterate through each post in the posts array
+    posts.forEach(post => {
         const postElement = document.createElement('div');
         postElement.classList.add('post-container');
         const authorName = userMap[post.userId] ? `${userMap[post.userId].firstName} ${userMap[post.userId].lastName}` : 'Author Unknown';
-
         const authorImage = userMap[post.userId] ? `${userMap[post.userId].image}` : 'No image';
-
         postElement.innerHTML = `
             <div class="image-and-name-container">
-            <img src="${authorImage}" alt ="image of the author">
-            <p>  <span class="author"  data-user-id="${post.userId}">${authorName}</span> </p>
-            <p class="user-id">userId:${post.userId}</p>           
+                <img src="${authorImage}" alt="image of the author">
+                <p><span class="author" data-user-id="${post.userId}">${authorName}</span></p>
+                <p class="user-id">userId:${post.userId}</p>           
             </div>
-           
             <h4>${post.title}</h4>
             <p class="post-body">${post.body}</p>
-
             <div class="reaction-container">
-            <p class="post-comment"> Comments </p>
-            <p>reactions:${post.reactions}</p>
-            <p class="post-id">postId:${post.id}</p>            
-            
+                <p class="post-comment"> Comments </p>
+                <p class="fas fa-thumbs-up">${post.reactions}</p>
+                <p class="post-id">postId:${post.id}</p>            
             </div>
- 
-            
             <div class="big-comments-container" id="comments-${post.id}"></div>
         `;
-
-        postsContainer.appendChild(postElement); //Append the post container element to the posts container
-
-        // Add event listener for user name click
+        postsContainer.appendChild(postElement);
+        //event listener for user name click
         const authorElement = postElement.querySelector('.author');
         authorElement.addEventListener('click', () => {
             const userId = authorElement.getAttribute('data-user-id');
-            const user = userMap[userId]; //Get the user data from the user map based on the user ID
+            const user = userMap[userId];
             displayUserProfile(user);
         });
     });
 }
 
-
 function fetchCommentsForPosts(posts) {
     posts.forEach(post => {
-        
         fetch(`https://dummyjson.com/comments?postId=${post.id}&limit=100`)
             .then(response => {
                 if (!response.ok) {
@@ -163,32 +142,26 @@ function fetchCommentsForPosts(posts) {
 
 function displayComments(postId, commentsData) {
     const commentsContainer = document.getElementById(`comments-${postId}`);
-    
     if (!commentsData.hasOwnProperty('comments')) {
         console.error('Invalid comments data:', commentsData);
         return;
     }
-    
     const comments = commentsData.comments;
-
     const postComments = comments.filter(comment => comment.postId === postId);
-
     postComments.forEach(comment => {
         const commentElement = document.createElement('div');
         commentElement.classList.add('small-comments-container');
         commentElement.innerHTML = `
             <p>${comment.body}</p>
-
             <div class="comment-name-and-id">
-            <p>By: ${comment.user.username}</p>
-            <p>id: ${comment.id}</p>
-            <p>postId: ${comment.postId}</p>
+                <p>By: ${comment.user.username}</p>
+                <p>id: ${comment.id}</p>
+                <p>postId: ${comment.postId}</p>
             </div>
         `;
         commentsContainer.appendChild(commentElement);
     });
 }
-
 
 function displayUserProfile(user) {
     const userProfilePopupBox = document.getElementById('userProfilePopupBox');
@@ -218,15 +191,9 @@ function displayUserProfile(user) {
 }
 
 function organizeUserData(users) {
-    if (!Array.isArray(users)) {  // Check if the users data is an array
-        console.error('Invalid users data:', users);
-        return {};
-    }
-
-    const userMap = {}; // Initialize an empty object to store user data
-
-    users.forEach(user => {    // Iterate through each user in the users array        
-        userMap[user.id] = user; //Add user data to the user map with user ID as the key
+    const userMap = {};
+    users.forEach(user => {
+        userMap[user.id] = user;
     });
     return userMap;
 }

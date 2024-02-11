@@ -1,5 +1,4 @@
-/* Font Awesome Icons */
-@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"); /* Font Awesome Icons */
 
 body {
     margin: 0;
@@ -43,6 +42,39 @@ body {
 
 }
 
+
+/* home section */
+/* Styles for the welcome section */
+#home .welcome {
+    text-align: center;
+    margin-top: 100px;
+}
+
+#home h1 {
+    font-size: 3em;
+    color: #333;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+}
+
+#home h2 {
+    font-size: 1.5em;
+    color: #3b3939;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+#home h4 {
+    text-align: center;
+    font-size: 1.2em;
+    color: #444;
+    line-height: 1.6;
+    margin-bottom: 50px;
+}
+/*--------------*/
+
+
+
 section {
     margin: 30px;
 }
@@ -72,6 +104,7 @@ button:disabled {
     justify-content:space-around;
     
     margin: 10px;
+    margin-bottom: 55px;
 }
 
 .post-container{
@@ -233,8 +266,6 @@ button:disabled {
     padding: 10px 10px;
     margin: 10px;
     text-align: center;
-
-
 }
 
 #contact h2 {
@@ -261,14 +292,15 @@ button:disabled {
 
 #contactForm button {
     padding: 10px 20px;
-    background-color: #333;
-    color: #fff;
+    background-color: #545353;
+    color: #c5c6cb;
     border: none;
     cursor: pointer;
+
 }
 
 #contactForm button:disabled {
-    background-color: #ccc;
+    background-color: #7c7b8d;
     cursor: not-allowed;
 }
 
