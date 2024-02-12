@@ -67,7 +67,7 @@ function fetchPosts(page, perPage, userMap) {
             return response.json();
         })
         .then(data => {
-            console.log('Posts data:', data); // Log the data received from the API
+            console.log('Posts data:', data);
             const posts = data.posts;
             displayPosts(posts, userMap);
             fetchCommentsForPosts(posts);
@@ -82,13 +82,13 @@ function fetchPosts(page, perPage, userMap) {
 
 function ManageScrolling(userMap) {
 
-    if (loading) return; //if data is already being loaded, return
+    if (loading) return; //if data is already being loaded, return without executing the rest of the code
 
-    let scrollPosition = window.innerHeight + window.scrollY;
+    let scrollPosition = window.innerHeight + window.scrollY; //how far down the user has scrolled
     let documentHeight = document.body.offsetHeight;
 
     // Load more data if user has scrolled to the bottom
-    if (scrollPosition >= documentHeight - 200) {
+    if (scrollPosition >= documentHeight - 200) { //considering the buffer where request to load more made
         fetchPosts(currentPage, postsPerPage, userMap);
     }
 }
@@ -98,6 +98,7 @@ function displayPosts(posts, userMap) {
     posts.forEach(post => {
         const postElement = document.createElement('div');
         postElement.classList.add('post-container');
+        //Access the object userMap with the key post.userId & if exists, fetch the name
         const authorName = userMap[post.userId] ? `${userMap[post.userId].firstName} ${userMap[post.userId].lastName}` : 'Author Unknown';
         const authorImage = userMap[post.userId] ? `${userMap[post.userId].image}` : 'No image';
         postElement.innerHTML = `
