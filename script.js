@@ -51,8 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
         //listens the event and calls the update function
         nameInput.addEventListener('input', updateSubmitButton); 
         emailInput.addEventListener('input', updateSubmitButton);
-        confirmCheckbox.addEventListener('change', updateSubmitButton); 
+        confirmCheckbox.addEventListener('change', updateSubmitButton);
+        
+        //for popup window not to be covered by the menu bar on small screens
     });
+    
 
 
 function fetchPosts(page, perPage, userMap) {
@@ -111,7 +114,7 @@ function displayPosts(posts, userMap) {
             <p class="post-body">${post.body}</p>
             <div class="reaction-container">
                 <p class="post-comment"> Comments </p>
-                <p class="fas fa-thumbs-up">${post.reactions}</p>
+                <p class="fas fa-thumbs-up"> <sup>${post.reactions}</sup> </p>
                 <p class="post-id">postId:${post.id}</p>            
             </div>
             <div class="big-comments-container" id="comments-${post.id}"></div>

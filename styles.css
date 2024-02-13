@@ -200,9 +200,7 @@ body {
     height: 100%;
     overflow: auto;
     background-color: rgba(0,0,0,0.4);
-    padding-top: 60px;
-
-    z-index: 1000; /*---To make it appear in the front of the header for mobile view---*/
+    padding-top: 60px;    
 }
 
 .PopupBox-content {
@@ -212,8 +210,7 @@ body {
     border-radius: 10px; 
     border: 1px solid #888;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    width: 40%;
-    
+    width: 40%;    
 }
 
 .close {
