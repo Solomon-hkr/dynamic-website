@@ -1,7 +1,7 @@
-Post House - Web Application for Posts and Comments
+Dynamic Web Application for Posts and Comments
 
 Post House is a dynamic web application developed as an individual project for the "Front End Development" course.
-The application dynamically load users' posts, comments, and user profiles from different dources and fetch them and combile them based on their ids. 
+The application dynamically load users' posts, comments, and user profiles from different sources and fetch them and combine them based on their ids. 
 And display the output in an attractive layout.
 
 Introduction:
